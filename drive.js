@@ -52,11 +52,12 @@ function updateSigninStatus(isSignedIn) {
     signoutButton.style.display = 'block';
     // listFiles();
     initRootFolder().then(() => {
-      initImagesFolder().then(() => {
-        loadImages();
-      });
       initDatabase().then(() => {
-        loadDatabase();
+        loadDatabase().then(() => {
+          initImagesFolder().then(() => {
+            loadImages();
+          });
+        });
       });
     })
   } else {
@@ -191,16 +192,7 @@ function loadImages() {
         localStorage.setItem(file.id, file.webContentLink);
         console.log("File loaded: " + file.id);
         if (i == 0) {
-          const el = document.querySelector('#first-image');
-          if (el) {
-            el.src = file.webContentLink;
-            el.addEventListener('click', () => {
-              const setupEl = document.querySelector('#setup-container');
-              setupEl.classList.add('hidden');
-              const appEl = document.querySelector('#app-container');
-              appEl.classList.remove('hidden');
-            })
-          }
+          loadApp();
         }
       }
     }

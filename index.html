@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -15,6 +16,7 @@
 
       <img style="width: 100px; height: 100px" id="first-image" src=""></img>
     </div>
+    <script src="app.js"></script>
     <script src="drive.js"></script>
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
@@ -22,8 +24,9 @@
     </script>
 
     <div id="app-container" class="hidden">
-
+      <div id="overlay"></div>
+      <div id="camera"></div>
+      <img id="main-image"></img>
     </div>
-    <script src="app.js"></script>
   </body>
 </html>

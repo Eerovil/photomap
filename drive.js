@@ -7,7 +7,7 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/res
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
+var SCOPES = 'https://www.googleapis.com/auth/drive' //.appdata https://www.googleapis.com/auth/drive.file';
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
@@ -52,6 +52,9 @@ function updateSigninStatus(isSignedIn) {
     signoutButton.style.display = 'block';
     // listFiles();
     initRootFolder().then(() => {
+      initImagesFolder().then(() => {
+        loadImages();
+      });
       initDatabase().then(() => {
         loadDatabase();
       });
@@ -138,6 +141,73 @@ function initRootFolder() {
     }
   })
 }
+
+
+/**
+ * Create folder for images called "images"
+ */
+function initImagesFolder() {
+  // Check if file exists
+  return gapi.client.drive.files.list({
+    'q': "name = 'images' and '" + localStorage.getItem('folderId') + "' in parents",
+    'pageSize': 1,
+    'fields': "nextPageToken, files(id, name)"
+  }).then(function(response) {
+    var files = response.result.files;
+    if (files && files.length > 0) {
+      // Folder exists
+      // Get folder ID
+      var folderId = files[0].id;
+      console.log("Folder exists, ID: " + folderId);
+      localStorage.setItem('imagesFolderId', folderId);
+    } else {
+      return gapi.client.drive.files.create({
+          'name': 'images',
+          'parents': [localStorage.getItem('folderId')],
+          'mimeType': 'application/vnd.google-apps.folder'
+      }).then(function(response) {
+          var folderId = response.result.id;
+          localStorage.setItem('imagesFolderId', folderId);
+          console.log("Folder created, ID: " + folderId);
+      });
+    }
+  })
+}
+
+/**
+ * Load all files in images folder and get their webContentLink
+ */
+function loadImages() {
+  const folderId = localStorage.getItem('imagesFolderId');
+  return gapi.client.drive.files.list({
+    'q': "'" + folderId + "' in parents",
+    'pageSize': 10,
+    'fields': "nextPageToken, files(id, name, webContentLink)"
+  }).then(function(response) {
+    const files = response.result.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        localStorage.setItem(file.id, file.webContentLink);
+        console.log("File loaded: " + file.id);
+        if (i == 0) {
+          const el = document.querySelector('#first-image');
+          if (el) {
+            el.src = file.webContentLink;
+            el.addEventListener('click', () => {
+              const setupEl = document.querySelector('#setup-container');
+              setupEl.classList.add('hidden');
+              const appEl = document.querySelector('#app-container');
+              appEl.classList.remove('hidden');
+            })
+          }
+        }
+      }
+    }
+  });
+}
+
+
 
 /**
  * Create a json file in root folder called "database.json"

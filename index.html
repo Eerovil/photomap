@@ -2,20 +2,28 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <p>Drive API Quickstart</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize_button" style="display: none;">Authorize</button>
-    <button id="signout_button" style="display: none;">Sign Out</button>
+    <div id="setup-container">
+      <button id="authorize_button" style="display: none;">Authorize</button>
+      <button id="signout_button" style="display: none;">Sign Out</button>
 
-    <pre id="content" style="white-space: pre-wrap;"></pre>
+      <pre id="content" style="white-space: pre-wrap;"></pre>
 
+      <img style="width: 100px; height: 100px" id="first-image" src=""></img>
+    </div>
     <script src="drive.js"></script>
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
+
+    <div id="app-container" class="hidden">
+
+    </div>
+    <script src="app.js"></script>
   </body>
 </html>

@@ -7,19 +7,12 @@ function loadApp() {
         contain: "outside",
     })
     elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
-    showFirstImage();
     window.breadCrumbs = [];
+    showFirstImage();
 }
 
 function showFirstImage() {
-    const firstImageId = Object.keys(window.database.images)[0];
-    const el = document.querySelector('#first-image');
-    if (el) {
-      el.src = localStorage.getItem(firstImageId);
-      el.addEventListener('click', () => {
-          startApp();
-      })
-    }
+    startApp();
 }
 
 function startApp() {
@@ -28,7 +21,12 @@ function startApp() {
     const appEl = document.querySelector('#app-container');
     appEl.classList.remove('hidden');
 
-    setMainImage(window.database.images[Object.keys(window.database.images)[0]]);
+    if (Object.keys(window.database.images).length > 0) {
+        setMainImage(window.database.images[Object.keys(window.database.images)[0]]);
+    } else {
+        window.newImage = {};
+        startCamera();
+    }
 }
 
 function drawLinks() {
@@ -50,6 +48,16 @@ function drawLinks() {
     }
 }
 
+function deleteImgAndChildren(img) {
+    if (img.links) {
+        img.links.forEach(link => {
+            deleteImgAndChildren(window.database.images[link.id]);
+        });
+    }
+    driveDeleteImage(img.id);
+    delete window.database[img.id];
+}
+
 function drawOverlayButtons() {
     for (const existing of document.querySelectorAll('#overlay div')) {
         // delete all first
@@ -66,27 +74,32 @@ function drawOverlayButtons() {
         el.addEventListener('click', () => {
             window.breadCrumbs.pop();
             setMainImage(window.breadCrumbs.pop());
-        });
-        document.querySelector('#overlay').appendChild(el);
-    }
-    // Dragging mode button
-    if (!window.draggingMode) {
-        el = document.createElement('div');
-        el.innerHTML = '<h2>DRAG</h2>';
-        el.addEventListener('click', () => {
-            window.draggingMode = true;
-            refreshOverlay();
-        });
-        document.querySelector('#overlay').appendChild(el);
-    } else {
-        el = document.createElement('div');
-        el.innerHTML = '<h2>STOP DRAG</h2>';
-        el.addEventListener('click', () => {
-            window.draggingMode = false;
             refreshOverlay();
         });
         document.querySelector('#overlay').appendChild(el);
     }
+
+    el = document.createElement('div');
+    el.innerHTML = '<h2>DELETE</h2>';
+    el.addEventListener('click', () => {
+        if (confirm('Poista kuva?')) {
+            deleteImgAndChildren(window.mainImage);
+            const parent = window.breadCrumbs[window.breadCrumbs.length - 2];
+            if (parent) {
+                // Delete link
+                parent.links = (parent.links || []).filter(link => link.id !== window.mainImage.id);
+            }
+
+            saveDatabase();
+            if (window.breadCrumbs.length > 1) {
+                window.breadCrumbs.pop();
+            }
+            setMainImage(window.breadCrumbs.pop());
+            drawLinks();
+            refreshOverlay();
+        }
+    });
+    document.querySelector('#overlay').appendChild(el);
 
     if (!window.cameraMode) {
         el = document.createElement('div');
@@ -137,6 +150,9 @@ function preloadImages(urls) {
 }
 
 function setMainImage(image) {
+    if (!image) {
+        return;
+    }
     window.mainImage = image;
     const id = image.id;
     const src = localStorage.getItem(id);
@@ -167,12 +183,14 @@ function startCamera() {
         const dataurl = canvas.toDataURL('image/jpeg', 1.0);
         driveSaveImage(dataurl).then(imageId => {
             window.newImage.id = imageId;
+            if (window.mainImage) {
             const links = window.database.images[window.mainImage.id].links || [];
-            links.push({
-                id: imageId,
-                top: window.newImage.top,
-                left: window.newImage.left,
-            })
+                links.push({
+                    id: imageId,
+                    top: window.newImage.top,
+                    left: window.newImage.left,
+                })
+            }
             window.database.images[imageId] = {
                 id: imageId,
                 links: [],

@@ -186,6 +186,7 @@ function loadImages() {
     'fields': "nextPageToken, files(id, name, webContentLink)"
   }).then(function(response) {
     const files = response.result.files;
+    let loaded = false;
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -193,8 +194,12 @@ function loadImages() {
         console.log("File loaded: " + file.id);
         if (i == 0) {
           loadApp();
+          loaded = true;
         }
       }
+    }
+    if (!loaded) {
+      loadApp();
     }
   });
 }
@@ -244,6 +249,7 @@ function loadDatabase() {
     var json = response.result;
     console.log("Database loaded: " + JSON.stringify(json));
     window.database = json || {};
+    window.database.images = window.database.images || {}
   });
 }
 
@@ -299,5 +305,17 @@ function driveSaveImage(dataurl) {
     console.log(response);
     loadImages();
     return response.result.id;
+  });
+}
+
+/**
+ * 
+ * Delete image file from given id
+ */
+function driveDeleteImage(id) {
+  return gapi.client.drive.files.delete({
+    'fileId': id
+  }).then(function(response) {
+    console.log(response);
   });
 }

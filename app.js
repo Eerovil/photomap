@@ -51,7 +51,7 @@ function drawLinks() {
 }
 
 function drawOverlayButtons() {
-    for (const existing of document.querySelectorAll('#overlay .link')) {
+    for (const existing of document.querySelectorAll('#overlay div')) {
         // delete all first
         existing.remove();
     }
@@ -88,18 +88,49 @@ function drawOverlayButtons() {
         document.querySelector('#overlay').appendChild(el);
     }
 
-    el = document.createElement('div');
-    el.innerHTML = '<h2>NEW</h2>';
-    el.addEventListener('click', () => {
-        startCamera();
-        refreshOverlay();
-    });
-    document.querySelector('#overlay').appendChild(el);
+    if (!window.cameraMode) {
+        el = document.createElement('div');
+        el.innerHTML = '<h2>NEW</h2>';
+        el.addEventListener('click', () => {
+            window.cameraMode = 'location';
+            const elem = document.querySelector('#main-image .img-container')
+            elem.addEventListener('click', (event) => {
+                // get the location where user clicked
+                const top = (event.offsetY / window.innerHeight) * 100.0;
+                const left = (event.offsetX / window.innerHeight) * 100.0;
+                window.newImage = {
+                    top: top,
+                    left: left,
+                }
+                startCamera();
+            })
+            refreshOverlay();
+        });
+        document.querySelector('#overlay').appendChild(el);
+    }
+    if (window.cameraMode == 'location') {
+        el = document.createElement('div');
+        el.innerHTML = '<h2>WHERE?</h2>';
+        document.querySelector('#overlay').appendChild(el);
+    }
 }
 
 function refreshOverlay() {
     drawLinks();
     drawOverlayButtons();
+}
+
+function preloadImages(urls) {
+    return Promise.all(
+        urls.map(
+            (a) =>
+                new Promise((res) => {
+                    const preloadImage = new Image();
+                    preloadImage.onload = res;
+                    preloadImage.src = a;
+                })
+        )
+    );
 }
 
 function setMainImage(image) {
@@ -109,12 +140,15 @@ function setMainImage(image) {
     const el = document.querySelector('#main-image img');
     el.src = src;
     window.breadCrumbs.push(window.mainImage);
+    if (image.links && image.links.length > 0) {
+        preloadImages(image.links.map(link => localStorage.getItem(link.id)))
+    }
     refreshOverlay();
 }
 
 
 function startCamera() {
-    window.cameraMode = true;
+    window.cameraMode = 'camera';
     const cameraContainer = document.querySelector('#camera');
     cameraContainer.classList.remove('hidden');
     const video = document.querySelector('#camera video');
@@ -128,9 +162,23 @@ function startCamera() {
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataurl = canvas.toDataURL('image/jpeg', 1.0);
-        driveSaveImage(dataurl)
+        driveSaveImage(dataurl).then(imageId => {
+            window.newImage.id = imageId;
+            const links = window.database.images[window.mainImage.id].links || [];
+            links.push({
+                id: imageId,
+                top: window.newImage.top,
+                left: window.newImage.left,
+            })
+            window.database.images[imageId] = {
+                id: imageId,
+                links: [],
+            }
+            saveDatabase();
+        })
         cameraContainer.classList.add('hidden');
         window.cameraMode = false;
+        refreshOverlay();
     };
 
     const constraints = {

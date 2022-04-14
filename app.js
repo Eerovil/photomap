@@ -12,7 +12,7 @@ function loadApp() {
         }, 100)
     })
     window.panzoom = Panzoom(elem, {
-        maxScale: 5,
+        maxScale: 3,
         contain: "outside",
     })
     elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
@@ -21,7 +21,9 @@ function loadApp() {
 }
 
 function showFirstImage() {
-    startApp();
+    setTimeout(() => {
+        startApp();
+    }, 500)
 }
 
 function startApp() {

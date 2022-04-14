@@ -11,7 +11,15 @@
     top: 0;
     left: 0;
 
-    overflow-y: hidden;
+    overflow: hidden;
+}
+
+#overlay {
+    height: 10%;
+}
+
+#camera canvas {
+    display: none;
 }
 
 #camera {
@@ -22,15 +30,15 @@
     z-index: 100;
 }
 
-#overlay .link {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 5em;
-    height: 5em;
+#main-image {
+    z-index: 1;
 }
 
-#main-image {
-    width: auto;
-    z-index: 1;
+#main-image .img-container {
+    height: 100vh;
+    width: max-content;
+}
+
+#main-image .img-container img {
+    height: 100%;
 }

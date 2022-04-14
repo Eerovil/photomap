@@ -1,6 +1,12 @@
 
 function loadApp() {
     // Load the app
+    const elem = document.querySelector('#main-image .img-container')
+    window.panzoom = Panzoom(elem, {
+        maxScale: 5,
+        contain: "outside",
+    })
+    elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
     showFirstImage();
     window.breadCrumbs = [];
 }
@@ -70,8 +76,39 @@ function setMainImage(image) {
     window.mainImage = image;
     const id = image.id;
     const src = localStorage.getItem(id);
-    const el = document.querySelector('#main-image');
+    const el = document.querySelector('#main-image img');
     el.src = src;
     window.breadCrumbs.push(window.mainImage);
     refreshOverlay();
+}
+
+
+function startCamera() {
+    const video = document.querySelector('#camera video');
+    const canvas = window.canvas = document.querySelector('#camera canvas');
+    canvas.width = 480;
+    canvas.height = 360;
+
+    const button = document.querySelector('#camera button');
+    button.onclick = function() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    };
+
+    const constraints = {
+        audio: false,
+        video: true
+    };
+
+    function handleSuccess(stream) {
+    window.stream = stream; // make stream available to browser console
+    video.srcObject = stream;
+    }
+
+    function handleError(error) {
+    console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
 }

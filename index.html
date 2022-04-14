@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/@panzoom/panzoom@4.4.4/dist/panzoom.min.js"></script>
   </head>
   <body>
 
@@ -25,8 +26,15 @@
 
     <div id="app-container" class="hidden">
       <div id="overlay"></div>
-      <div id="camera"></div>
-      <img id="main-image"></img>
+      <div id="camera" class="hidden">
+        <video autoplay></video>
+        <canvas></canvas>
+      </div>
+      <div id="main-image">
+        <div class="img-container">
+          <img></img>
+        </div>
+      </div>
     </div>
   </body>
 </html>

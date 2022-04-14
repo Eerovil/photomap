@@ -1,5 +1,5 @@
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #app-container, #main-image, #overlay, #camera {
@@ -16,6 +16,7 @@
 
 #overlay {
     height: 10%;
+    display: flex;
 }
 
 #camera canvas {
@@ -24,6 +25,18 @@
 
 #camera {
     z-index: 10;
+    display: flex;
+    background-color: white;
+}
+
+#camera video {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+#camera button {
+    position: absolute;
+    bottom: 1rem;
 }
 
 #overlay {

@@ -262,3 +262,41 @@ function saveDatabase() {
     console.log(response);
   });
 }
+
+
+/**
+ * Save jpeg image file from given dataurl
+ */
+function driveSaveImage(dataurl) {
+  // timestamp as filename
+  const fileName = new Date().getTime() + '.jpeg';
+  const boundary = '-------314159265358979323846';
+  const delimiter = "--" + boundary + "\r\n";
+  const close_delim = "\r\n--" + boundary + "--";
+  const contentType = 'image/jpeg';
+  const metadata = {'name': fileName,'mimeType': contentType, 'parents': [localStorage.getItem('imagesFolderId')]};
+
+  base64Data = dataurl.replace(/^data:image\/jpeg;base64,/, "");
+
+  const multipartRequestBody = delimiter +
+    'Content-Type: application/json\r\n\r\n' +
+    JSON.stringify(metadata) + "\r\n" +
+    delimiter +
+    'Content-Type: ' + contentType + '\r\n' +
+    'Content-Transfer-Encoding: base64\r\n\r\n' +
+    base64Data +
+    close_delim;
+  console.log(multipartRequestBody);
+
+  // data url to raw data
+  return gapi.client.request({
+    'path': '/upload/drive/v3/files',
+    'method': 'POST',
+    'params': {'uploadType': 'multipart'},
+    'headers': {'Content-Type': 'multipart/form-data; boundary=' + boundary},
+    'body': multipartRequestBody
+  }).then(function(response) {
+    console.log(response);
+    return response.result.id;
+  });
+}

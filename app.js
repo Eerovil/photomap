@@ -50,30 +50,56 @@ function drawLinks() {
     }
 }
 
-function drawBackButton() {
+function drawOverlayButtons() {
     for (const existing of document.querySelectorAll('#overlay .link')) {
-        // delete
+        // delete all first
         existing.remove();
     }
-    if (window.breadCrumbs.length < 2) {
-        console.log("cant go back")
+    if (window.cameraMode) {
         return;
     }
-    const el = document.createElement('div');
-    el.classList.add('link');
-    el.innerHTML = '<h2>BACK</h2>';
-    el.style.top = '1%';
-    el.style.left = '1%';
+    let el;
+    if (window.breadCrumbs.length > 1) {
+        // back button
+        el = document.createElement('div');
+        el.innerHTML = '<h2>BACK</h2>';
+        el.addEventListener('click', () => {
+            window.breadCrumbs.pop();
+            setMainImage(window.breadCrumbs.pop());
+        });
+        document.querySelector('#overlay').appendChild(el);
+    }
+    // Dragging mode button
+    if (!window.draggingMode) {
+        el = document.createElement('div');
+        el.innerHTML = '<h2>DRAG</h2>';
+        el.addEventListener('click', () => {
+            window.draggingMode = true;
+            refreshOverlay();
+        });
+        document.querySelector('#overlay').appendChild(el);
+    } else {
+        el = document.createElement('div');
+        el.innerHTML = '<h2>STOP DRAG</h2>';
+        el.addEventListener('click', () => {
+            window.draggingMode = false;
+            refreshOverlay();
+        });
+        document.querySelector('#overlay').appendChild(el);
+    }
+
+    el = document.createElement('div');
+    el.innerHTML = '<h2>NEW</h2>';
     el.addEventListener('click', () => {
-        window.breadCrumbs.pop();
-        setMainImage(window.breadCrumbs.pop());
+        startCamera();
+        refreshOverlay();
     });
     document.querySelector('#overlay').appendChild(el);
 }
 
 function refreshOverlay() {
     drawLinks();
-    drawBackButton();
+    drawOverlayButtons();
 }
 
 function setMainImage(image) {
@@ -88,6 +114,9 @@ function setMainImage(image) {
 
 
 function startCamera() {
+    window.cameraMode = true;
+    const cameraContainer = document.querySelector('#camera');
+    cameraContainer.classList.remove('hidden');
     const video = document.querySelector('#camera video');
     const canvas = window.canvas = document.querySelector('#camera canvas');
     canvas.width = 480;
@@ -95,14 +124,19 @@ function startCamera() {
 
     const button = document.querySelector('#camera button');
     button.onclick = function() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataurl = canvas.toDataURL('image/jpeg', 1.0);
+        driveSaveImage(dataurl)
+        cameraContainer.classList.add('hidden');
+        window.cameraMode = false;
     };
 
     const constraints = {
         audio: false,
-        video: true
+        video: { facingMode: "environment" },
+
     };
 
     function handleSuccess(stream) {

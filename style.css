@@ -42,3 +42,7 @@
 #main-image .img-container img {
     height: 100%;
 }
+
+#main-image .img-container .link {
+    position: absolute;
+}

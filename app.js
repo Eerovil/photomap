@@ -32,7 +32,7 @@ function startApp() {
 }
 
 function drawLinks() {
-    const links = document.querySelectorAll('#overlay .link');
+    const links = document.querySelectorAll('#main-image .img-container .link');
     // Delete existing links
     links.forEach(link => {
         link.remove();
@@ -46,11 +46,15 @@ function drawLinks() {
         el.addEventListener('click', () => {
             setMainImage(window.database.images[link.id]);
         });
-        document.querySelector('#overlay').appendChild(el);
+        document.querySelector('#main-image .img-container').appendChild(el);
     }
 }
 
 function drawBackButton() {
+    for (const existing of document.querySelectorAll('#overlay .link')) {
+        // delete
+        existing.remove();
+    }
     if (window.breadCrumbs.length < 2) {
         console.log("cant go back")
         return;

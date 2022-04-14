@@ -94,7 +94,7 @@ function drawOverlayButtons() {
         el.addEventListener('click', () => {
             window.cameraMode = 'location';
             const elem = document.querySelector('#main-image .img-container')
-            elem.addEventListener('click', (event) => {
+            const startCameraCallback = (event) => {
                 // get the location where user clicked
                 const top = (event.offsetY / window.innerHeight) * 100.0;
                 const left = (event.offsetX / window.innerHeight) * 100.0;
@@ -103,7 +103,10 @@ function drawOverlayButtons() {
                     left: left,
                 }
                 startCamera();
-            })
+                // clear eventlistener
+                elem.removeEventListener('click', startCameraCallback);
+            }
+            elem.addEventListener('click', startCameraCallback)
             refreshOverlay();
         });
         document.querySelector('#overlay').appendChild(el);
@@ -175,6 +178,7 @@ function startCamera() {
                 links: [],
             }
             saveDatabase();
+            drawLinks();
         })
         cameraContainer.classList.add('hidden');
         window.cameraMode = false;

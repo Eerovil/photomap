@@ -297,6 +297,7 @@ function driveSaveImage(dataurl) {
     'body': multipartRequestBody
   }).then(function(response) {
     console.log(response);
+    loadImages();
     return response.result.id;
   });
 }

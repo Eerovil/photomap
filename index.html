@@ -12,10 +12,9 @@
     <div id="setup-container">
       <button id="authorize_button" style="display: none;">Authorize</button>
       <button id="signout_button" style="display: none;">Sign Out</button>
+      <h1>LADATAAN</h1>
 
       <pre id="content" style="white-space: pre-wrap;"></pre>
-
-      <img style="width: 100px; height: 100px" id="first-image" src=""></img>
     </div>
     <script src="app.js"></script>
     <script src="drive.js"></script>
@@ -23,9 +22,9 @@
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
-
     <div id="app-container" class="hidden">
       <div id="overlay"></div>
+      <div id="loading" class="hidden"><h1>LADATAAN</h1></div>
       <div id="camera" class="hidden">
         <video autoplay></video>
         <button>CAPTURE</button>

@@ -2,6 +2,15 @@
 function loadApp() {
     // Load the app
     const elem = document.querySelector('#main-image .img-container')
+    const imgEl = document.querySelector('#main-image .img-container img')
+    imgEl.addEventListener('load', () => {
+        const loadingElem = document.querySelector('#loading');
+        loadingElem.classList.add('hidden');
+        window.panzoom.zoom(1)
+        setTimeout(() => {
+            window.panzoom.pan(100, 100)
+        }, 100)
+    })
     window.panzoom = Panzoom(elem, {
         maxScale: 5,
         contain: "outside",
@@ -38,9 +47,8 @@ function drawLinks() {
     for (const link of (window.mainImage.links || [])) {
         const el = document.createElement('div');
         el.classList.add('link');
-        el.innerHTML = '<h2>LINK</h2>';
-        el.style.top = link.top + 'vh';
-        el.style.left = link.left + 'vh';
+        el.style.top = `calc(${link.top}vh - 25px)`;
+        el.style.left = `calc(${link.left}vh - 25px)`;
         el.addEventListener('click', () => {
             setMainImage(window.database.images[link.id]);
         });
@@ -70,13 +78,18 @@ function drawOverlayButtons() {
     if (window.breadCrumbs.length > 1) {
         // back button
         el = document.createElement('div');
-        el.innerHTML = '<h2>BACK</h2>';
+        el.innerHTML = '<h2> <-- BACK</h2>';
         el.addEventListener('click', () => {
             window.breadCrumbs.pop();
             setMainImage(window.breadCrumbs.pop());
             refreshOverlay();
         });
         document.querySelector('#overlay').appendChild(el);
+    }
+
+    // check for edit=1 query param
+    if (window.location.search.indexOf('edit=1') === -1) {
+        return
     }
 
     el = document.createElement('div');
@@ -163,6 +176,9 @@ function setMainImage(image) {
         preloadImages(image.links.map(link => localStorage.getItem(link.id)))
     }
     refreshOverlay();
+
+    const loadingElem = document.querySelector('#loading');
+    loadingElem.classList.remove('hidden');
 }
 
 

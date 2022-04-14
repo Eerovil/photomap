@@ -195,30 +195,32 @@ function startCamera() {
 
     const button = document.querySelector('#camera button');
     button.onclick = function() {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataurl = canvas.toDataURL('image/jpeg', 1.0);
-        driveSaveImage(dataurl).then(imageId => {
-            window.newImage.id = imageId;
-            if (window.mainImage) {
-            const links = window.database.images[window.mainImage.id].links || [];
-                links.push({
+        setTimeout(() => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataurl = canvas.toDataURL('image/jpeg', 1.0);
+            driveSaveImage(dataurl).then(imageId => {
+                window.newImage.id = imageId;
+                if (window.mainImage) {
+                const links = window.database.images[window.mainImage.id].links || [];
+                    links.push({
+                        id: imageId,
+                        top: window.newImage.top,
+                        left: window.newImage.left,
+                    })
+                }
+                window.database.images[imageId] = {
                     id: imageId,
-                    top: window.newImage.top,
-                    left: window.newImage.left,
-                })
-            }
-            window.database.images[imageId] = {
-                id: imageId,
-                links: [],
-            }
-            saveDatabase();
-            drawLinks();
-        })
-        cameraContainer.classList.add('hidden');
-        window.cameraMode = false;
-        refreshOverlay();
+                    links: [],
+                }
+                saveDatabase();
+                drawLinks();
+            })
+            cameraContainer.classList.add('hidden');
+            window.cameraMode = false;
+            refreshOverlay();
+        }, 1000)
     };
 
     const constraints = {

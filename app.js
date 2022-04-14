@@ -8,7 +8,7 @@ function loadApp() {
         loadingElem.classList.add('hidden');
         window.panzoom.zoom(1)
         setTimeout(() => {
-            window.panzoom.pan(100, 100)
+            window.panzoom.pan((window.innerWidth / 2) - (imgEl.offsetWidth / 2), 0)
         }, 100)
     })
     window.panzoom = Panzoom(elem, {
@@ -166,6 +166,8 @@ function setMainImage(image) {
     if (!image) {
         return;
     }
+    window.panzoom.zoom(1)
+
     window.mainImage = image;
     const id = image.id;
     const src = localStorage.getItem(id);

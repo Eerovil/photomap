@@ -14,6 +14,23 @@
     overflow-y: hidden;
 }
 
+#camera {
+    z-index: 10;
+}
+
+#overlay {
+    z-index: 100;
+}
+
+#overlay .link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5em;
+    height: 5em;
+}
+
 #main-image {
     width: auto;
+    z-index: 1;
 }

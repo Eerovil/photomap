@@ -17,6 +17,7 @@ function loadApp() {
     })
     elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
     window.breadCrumbs = [];
+    window.visitedLinks = new Set();
     showFirstImage();
 }
 
@@ -49,6 +50,9 @@ function drawLinks() {
     for (const link of (window.mainImage.links || [])) {
         const el = document.createElement('div');
         el.classList.add('link');
+        if (window.visitedLinks.has(link.id)) {
+            el.classList.add('visited');
+        }
         el.style.top = `calc(${link.top - 1.0}vh - 25px)`;
         el.style.left = `calc(${link.left - 1.0}vh - 35px)`;
         el.addEventListener('click', () => {
@@ -80,7 +84,7 @@ function drawOverlayButtons() {
     if (window.breadCrumbs.length > 1) {
         // back button
         el = document.createElement('div');
-        el.innerHTML = '<h2> <-- BACK</h2>';
+        el.innerHTML = '<h2 class="backbutton"> <-- BACK</h2>';
         el.addEventListener('click', () => {
             window.breadCrumbs.pop();
             setMainImage(window.breadCrumbs.pop());
@@ -173,6 +177,14 @@ function setMainImage(image) {
         return;
     }
     window.panzoom.zoom(0.5)
+    // Check if all image.links id are in window.visitedLinks
+    const allLinksInVisited = (
+        (image.links || []).length === 0 ||
+        (image.links || []).every(link => window.visitedLinks.has(link.id))
+    );
+    if (allLinksInVisited) {
+        window.visitedLinks.add(image.id);
+    }
 
     window.mainImage = image;
     const id = image.id;

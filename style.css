@@ -17,6 +17,8 @@
 #overlay {
     height: 10%;
     display: flex;
+    top: unset;
+    bottom: 0;
 }
 
 #camera canvas {
@@ -51,6 +53,12 @@
     z-index: 100;
 }
 
+#overlay .backbutton {
+    padding: 1rem;
+    margin: 1rem;
+    border: 1px solid black;
+}
+
 #main-image {
     z-index: 1;
 }
@@ -77,6 +85,10 @@
     width: 3rem;
     height: 3rem;
     border: 6px solid #e5ffe5;
-    background-color: #46ff46;
+    background-color: #ffed46;
     border-radius: 50%;
+}
+
+#main-image .img-container .link.visited {
+    background-color: #46ff46;
 }

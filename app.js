@@ -173,6 +173,13 @@ function setMainImage(image) {
     window.mainImage = image;
     const id = image.id;
     const src = localStorage.getItem(id);
+    if (!src) {
+        // Try again after a while
+        setTimeout(() => {
+            setMainImage(image)
+        }, 500)
+        return;
+    }
     const el = document.querySelector('#main-image img');
     el.src = src;
     window.breadCrumbs.push(window.mainImage);

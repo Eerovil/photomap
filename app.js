@@ -164,6 +164,10 @@ function preloadImages(urls) {
     );
 }
 
+function getImageURL(id) {
+    return `https://drive.google.com/uc?id=${id}&export=download`;
+}
+
 function setMainImage(image) {
     if (!image) {
         return;
@@ -172,7 +176,7 @@ function setMainImage(image) {
 
     window.mainImage = image;
     const id = image.id;
-    const src = localStorage.getItem(id);
+    const src = getImageURL(id);
     if (!src) {
         // Try again after a while
         setTimeout(() => {
@@ -184,7 +188,7 @@ function setMainImage(image) {
     el.src = src;
     window.breadCrumbs.push(window.mainImage);
     if (image.links && image.links.length > 0) {
-        preloadImages(image.links.map(link => localStorage.getItem(link.id)))
+        preloadImages(image.links.map(link => getImageURL(link.id)))
     }
     refreshOverlay();
 

@@ -55,9 +55,7 @@ function updateSigninStatus(isSignedIn) {
       initDatabase().then(() => {
         loadDatabase().then(() => {
           initImagesFolder().then(() => {
-            loadImages().then(() => {
-              loadApp();
-            });
+            loadApp();
           });
         });
       });
@@ -177,28 +175,6 @@ function initImagesFolder() {
   })
 }
 
-/**
- * Load all files in images folder and get their webContentLink
- */
-function loadImages() {
-  const folderId = localStorage.getItem('imagesFolderId');
-  return gapi.client.drive.files.list({
-    'q': "'" + folderId + "' in parents",
-    'pageSize': 10,
-    'fields': "nextPageToken, files(id, name, webContentLink)"
-  }).then(function(response) {
-    const files = response.result.files;
-    if (files && files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        localStorage.setItem(file.id, file.webContentLink);
-        console.log("File loaded: " + file.id);
-      }
-    }
-  });
-}
-
-
 
 /**
  * Create a json file in root folder called "database.json"
@@ -297,7 +273,6 @@ function driveSaveImage(dataurl) {
     'body': multipartRequestBody
   }).then(function(response) {
     console.log(response);
-    loadImages();
     return response.result.id;
   });
 }

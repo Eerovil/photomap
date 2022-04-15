@@ -50,7 +50,7 @@ function drawLinks() {
         const el = document.createElement('div');
         el.classList.add('link');
         el.style.top = `calc(${link.top}vh - 25px)`;
-        el.style.left = `calc(${link.left}vh - 25px)`;
+        el.style.left = `calc(${link.left}vh - 35px)`;
         el.addEventListener('click', () => {
             setMainImage(window.database.images[link.id]);
         });
@@ -205,7 +205,7 @@ function startCamera() {
             driveSaveImage(dataurl).then(imageId => {
                 window.newImage.id = imageId;
                 if (window.mainImage) {
-                const links = window.database.images[window.mainImage.id].links || [];
+                    const links = window.database.images[window.mainImage.id].links || [];
                     links.push({
                         id: imageId,
                         top: window.newImage.top,

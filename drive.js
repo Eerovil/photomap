@@ -55,7 +55,9 @@ function updateSigninStatus(isSignedIn) {
       initDatabase().then(() => {
         loadDatabase().then(() => {
           initImagesFolder().then(() => {
-            loadImages();
+            loadImages().then(() => {
+              loadApp();
+            });
           });
         });
       });
@@ -186,20 +188,12 @@ function loadImages() {
     'fields': "nextPageToken, files(id, name, webContentLink)"
   }).then(function(response) {
     const files = response.result.files;
-    let loaded = false;
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         localStorage.setItem(file.id, file.webContentLink);
         console.log("File loaded: " + file.id);
-        if (i == 0) {
-          loadApp();
-          loaded = true;
-        }
       }
-    }
-    if (!loaded) {
-      loadApp();
     }
   });
 }

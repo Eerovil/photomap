@@ -2,7 +2,7 @@
     "name": "PhotoMap",
     "short_name": "PhotoMap",
     "display": "fullscreen",
-    "start_url": "/",
+    "start_url": "/photomap/",
     "theme_color": "#673ab6",
     "background_color": "#111111",
     "icons": [

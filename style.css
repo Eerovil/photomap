@@ -55,10 +55,16 @@
     z-index: 1;
 }
 
-#main-image .img-container {
+#main-image .img-container-container {
     height: 100vh;
     width: max-content;
     padding: 12rem 0;
+}
+
+#main-image .img-container {
+    height: 100%;
+    width: max-content;
+    position: relative;
 }
 
 #main-image .img-container img {

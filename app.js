@@ -1,7 +1,7 @@
 
 function loadApp() {
     // Load the app
-    const elem = document.querySelector('#main-image .img-container')
+    const elem = document.querySelector('#main-image .img-container-container')
     const imgEl = document.querySelector('#main-image .img-container img')
     imgEl.addEventListener('load', () => {
         const loadingElem = document.querySelector('#loading');

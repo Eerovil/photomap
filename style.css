@@ -42,7 +42,7 @@
 #loading {
     z-index: 1000;
     display: flex;
-    background-color: #ffffff47;
+    background-color: #ffffffd0;
     justify-content: center;
     align-items: center;
 }
@@ -58,6 +58,7 @@
 #main-image .img-container {
     height: 100vh;
     width: max-content;
+    padding: 12rem 0;
 }
 
 #main-image .img-container img {

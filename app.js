@@ -6,7 +6,7 @@ function loadApp() {
     imgEl.addEventListener('load', () => {
         const loadingElem = document.querySelector('#loading');
         loadingElem.classList.add('hidden');
-        window.panzoom.zoom(1)
+        window.panzoom.zoom(0.5)
         setTimeout(() => {
             window.panzoom.pan((window.innerWidth / 2) - (imgEl.offsetWidth / 2), 0)
         }, 100)
@@ -172,7 +172,7 @@ function setMainImage(image) {
     if (!image) {
         return;
     }
-    window.panzoom.zoom(1)
+    window.panzoom.zoom(0.5)
 
     window.mainImage = image;
     const id = image.id;

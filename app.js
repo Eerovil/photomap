@@ -49,8 +49,8 @@ function drawLinks() {
     for (const link of (window.mainImage.links || [])) {
         const el = document.createElement('div');
         el.classList.add('link');
-        el.style.top = `calc(${link.top}vh - 25px)`;
-        el.style.left = `calc(${link.left}vh - 35px)`;
+        el.style.top = `calc(${link.top - 1.0}vh - 25px)`;
+        el.style.left = `calc(${link.left - 1.0}vh - 35px)`;
         el.addEventListener('click', () => {
             setMainImage(window.database.images[link.id]);
         });
